@@ -1,6 +1,7 @@
 local recent = {}
 local last_timestamp = 0
 local debug = false
+
 local MSG_SAVE = "Saving information for %s in case they die..."
 local MSG_DIED = "%s went splat!"
 
