@@ -1,2 +1,2 @@
-**v1.0.1** - No real changes, testing release tooling
-**v1.0.0** - Initial working version
+- **v1.0.1** - No real changes, testing release tooling
+- **v1.0.0** - Initial working version
