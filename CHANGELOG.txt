@@ -1,2 +1,3 @@
+- **v1.0.2** - Changed audio channel to "Master". This will be configurable in a future release
 - **v1.0.1** - No real changes, testing release tooling
 - **v1.0.0** - Initial working version

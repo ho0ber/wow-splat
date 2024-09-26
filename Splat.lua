@@ -13,7 +13,7 @@ end
 
 local function splat()
     local sounds = {2907665, 2907666, 2907667, 2907668, 2907669}
-    PlaySoundFile(sounds[ math.random( #sounds ) ])
+    PlaySoundFile(sounds[ math.random( #sounds ) ], "Master")
 end
 
 local function OnEvent(self, event)

@@ -1,5 +1,5 @@
 ## Interface: 110002
-## Version: 1.0.1
+## Version: 1.0.2
 ## Title: Splat
 ## Notes: Detects and notifies when nearby players fall to their deaths
 ## Author: Hoober
