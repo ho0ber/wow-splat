@@ -4,81 +4,79 @@ local debug = false
 
 local MSG_SAVE = "Saving information for %s in case they die..."
 local MSG_DIED = "%s went splat!"
+local SOUND_CHANNELS = {"Master", "SFX"}
 
-local function debugPrint(message)
-    if debug then
-        print(message)
+local function debugPrint(...)
+    if debug or (splatSettings ~= nil and splatSettings["debugMessages"]) then
+        print(...)
     end
 end
 
-local function splat()
+local function splat(destName)
     local sounds = {2907665, 2907666, 2907667, 2907668, 2907669}
-    PlaySoundFile(sounds[ math.random( #sounds ) ], "Master")
+    if splatSettings["chatMessage"] ~= false then
+        print(MSG_DIED:format(destName))
+    end
+    if splatSettings["soundChannel"] ~=3 then
+        debugPrint("Playing in sound channel", SOUND_CHANNELS[splatSettings["soundChannel"]])
+        PlaySoundFile(sounds[ math.random( #sounds ) ], SOUND_CHANNELS[splatSettings["soundChannel"]])
+    end
 end
 
 local function OnSettingChanged(setting, value)
-    -- This callback will be invoked whenever a setting is modified.
-    print("Setting changed:", setting:GetVariable(), value)
+    debugPrint("Setting changed:", setting:GetVariable(), tostring(value))
 end
 
 local function configureSettings() 
     local category = Settings.RegisterVerticalLayoutCategory("Splat")
     
     do
-        local variable = "toggle"
-        local name = "Test Checkbox"
-        local tooltip = "This is a tooltip for the checkbox."
-        local variableKey = "toggle"
+        local variable = "chatMessage"
+        local name = "Chat Message"
+        local tooltip = "Show a message in chat when someone splats"
+        local variableKey = "chatMessage"
         local variableTbl = splatSettings
-        local defaultValue = false
+        local defaultValue = true
     
-        -- local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), defaultValue)
         local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
         setting:SetValueChangedCallback(OnSettingChanged)
         Settings.CreateCheckbox(category, setting, tooltip)
-        -- Settings.SetOnValueChangedCallback(variable, OnSettingChanged)
     end
     
     do
-        local variable = "slider"
-        local name = "Test Slider"
-        local tooltip = "This is a tooltip for the slider."
-        local variableKey = "slider"
-        local variableTbl = splatSettings
-        local defaultValue = 180
-        local minValue = 90
-        local maxValue = 360
-        local step = 10
-    
-        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
-        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
-        options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right);
-        setting:SetValueChangedCallback(OnSettingChanged)
-        Settings.CreateSlider(category, setting, options, tooltip)
-        -- Settings.SetOnValueChangedCallback(variable, OnSettingChanged)
-    end
-    
-    do
-        local variable = "selection"
-        local defaultValue = 2  -- Corresponds to "Option 2" below.
-        local name = "Test Dropdown"
-        local tooltip = "This is a tooltip for the dropdown."
-        local variableKey = "selection"
+        local variable = "soundChannel"
+        local defaultValue = 2
+        local name = "Sound Channel"
+        local tooltip = "Which sound channel the splat sound uses"
+        local variableKey = "soundChannel"
         local variableTbl = splatSettings
     
         local function GetOptions()
             local container = Settings.CreateControlTextContainer()
-            container:Add(1, "Option 1")
-            container:Add(2, "Option 2")
-            container:Add(3, "Option 3")
+            container:Add(1, "Master")
+            container:Add(2, "SFX")
+            container:Add(3, "Disabled")
             return container:GetData()
         end
     
         local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
         setting:SetValueChangedCallback(OnSettingChanged)
         Settings.CreateDropdown(category, setting, GetOptions, tooltip)
-        -- Settings.SetOnValueChangedCallback(variable, OnSettingChanged)
     end
+
+    do
+        local variable = "debugMessages"
+        local name = "Show Debug Message"
+        local tooltip = "Shows debug messages for addon troubleshooting"
+        local variableKey = "debugMessages"
+        local variableTbl = splatSettings
+        local defaultValue = false
+    
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+
     
     Settings.RegisterAddOnCategory(category)
 end    
@@ -110,22 +108,18 @@ local function OnEvent(self, event, ...)
             end
             
             if recent[destGUID] == timestamp then
-                print(MSG_DIED:format(destName))
-                splat()
+                splat(destName)
                 recent[destGUID] = nil
             end
         end
     elseif event == "ADDON_LOADED" then
         local addon = ...
-        print("Loaded", addon)
         if addon == "Splat" then
-            print("Splat loaded!")
-            -- if splatSettings == nil then
-            --     splatSettings = {}
-            -- end
-            splatSettings = {}
+            if splatSettings == nil then
+                splatSettings = {}
+            end
             configureSettings()
-            print(splatSettings[toggle])
+            debugPrint("Loaded Splat!")
         end
     end
 end
@@ -134,4 +128,3 @@ local f = CreateFrame("Frame")
 f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", OnEvent)
-debugPrint("Loaded Splat!")
