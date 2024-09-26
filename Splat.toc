@@ -1,5 +1,5 @@
 ## Interface: 110002
-## Version: 1.0.2
+## Version: 1.0.3
 ## Title: Splat
 ## SavedVariables: splatSettings
 ## Notes: Detects and notifies when nearby players fall to their deaths
