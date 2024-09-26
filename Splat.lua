@@ -45,7 +45,7 @@ local function configureSettings()
     
     do
         local variable = "soundChannel"
-        local defaultValue = 2
+        local defaultValue = 1
         local name = "Sound Channel"
         local tooltip = "Which sound channel the splat sound uses"
         local variableKey = "soundChannel"
