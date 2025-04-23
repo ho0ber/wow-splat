@@ -1,3 +1,4 @@
+- **v1.0.5** - 11.1.5 patch support
 - **v1.0.4** - Undermine patch support
 - **v1.0.3** - Added settings page with audio channel, chat message, and debug options
 - **v1.0.2** - Changed audio channel to "Master". This will be configurable in a future release
